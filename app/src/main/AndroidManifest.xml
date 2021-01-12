@@ -29,7 +29,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Posq"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.login.LoginActivity"></activity>
+        <activity android:name=".ui.checkout.CheckoutActivity"></activity>
+        <activity android:name=".ui.login.LoginActivity" />
         <activity android:name=".ui.home.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

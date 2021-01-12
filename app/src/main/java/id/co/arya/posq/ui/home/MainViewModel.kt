@@ -7,13 +7,13 @@ import id.co.arya.posq.data.response.ListProductResponse
 import kotlinx.coroutines.Dispatchers
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import id.co.arya.posq.data.model.Cart
 import id.co.arya.posq.utils.Resource
+import java.util.ArrayList
 
 class MainViewModel(private val mainRepository: MainRepository): ViewModel() {
 
-//    fun listAllProduct(key: String, data: RequestParams): MutableLiveData<ListProductResponse> {
-//        return mainRepository.listProduct(key, data)
-//    }
+    private var allCart = MutableLiveData<ArrayList<Cart>>()
 
     fun getListProduct(key: String, data: RequestParams) = liveData(Dispatchers.IO) {
         emit(Resource.loading(data = null))
@@ -22,6 +22,14 @@ class MainViewModel(private val mainRepository: MainRepository): ViewModel() {
         } catch (e: Exception) {
             emit(Resource.error(data = null, message = e.message ?: "Error Occurred"))
         }
+    }
+
+    fun setAllCartData(allCart: ArrayList<Cart>) {
+        this.allCart.postValue(allCart)
+    }
+
+    fun getAllCartData(): MutableLiveData<ArrayList<Cart>> {
+        return this.allCart
     }
 
 }
