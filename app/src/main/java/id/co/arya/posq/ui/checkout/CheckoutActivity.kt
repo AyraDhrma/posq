@@ -40,7 +40,7 @@ class CheckoutActivity : AppCompatActivity() {
 
         val dao = db.dao()
         val price = dao.totalPrice()
-        var allCart = dao.selectAllCart()
+        var allCart = dao.selectAllSelectedCart()
         checkoutViewModel.setAllCartData(allCart as java.util.ArrayList<Cart>)
         checkoutViewModel.getAllCartData().observe(this, androidx.lifecycle.Observer {
             response ->
@@ -51,7 +51,7 @@ class CheckoutActivity : AppCompatActivity() {
                 rv_checkout.layoutManager = LinearLayoutManager(this)
                 val adapter = ItemCheckoutAdapter(response)
                 rv_checkout.adapter = adapter
-                total_price.text = "Total ${numberFormat.format(price.toInt())}"
+                total_price.text = "Total ${numberFormat.format(price?.toInt())}"
             }
         })
     }

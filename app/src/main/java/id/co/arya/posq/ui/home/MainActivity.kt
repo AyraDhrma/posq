@@ -63,16 +63,6 @@ class MainActivity : AppCompatActivity() {
         smartPosApi = ITYSmartPosApi.get(this)
         // ------------------------------------
 
-        // Cart Show
-//        val clickListener: View.OnClickListener = View.OnClickListener {
-//        }
-//        SnackbarCart.make(
-//            search_div, "1000 Items", Snackbar.LENGTH_INDEFINITE,
-//            clickListener, R.drawable.ic_shopping_bag, "Rp 100.000.000",
-//            ContextCompat.getColor(this@MainActivity, R.color.purple_700)
-//        )?.show()
-        // ----------------------------------------------------------------------------
-
         listener()
     }
 
@@ -206,8 +196,8 @@ class MainActivity : AppCompatActivity() {
         try {
             val dao = db.dao()
             if (dao.findByCode(listProductResponse[position].pr_kode) != null) {
-                if (dao.findByCode(listProductResponse[position].pr_kode).pr_harga.toInt() == 0) {
-                     dao.deleteItems(listProductResponse[position].pr_id)
+                if (dao.findByCode(listProductResponse[position].pr_kode).total == 0) {
+                    dao.deleteItems(listProductResponse[position].pr_kode)
                 } else {
                     val totalPrice = totalItems * listProduct[position].pr_harga.toInt()
                     dao.updateCart(totalItems, totalPrice, listProductResponse[position].pr_kode)
@@ -226,7 +216,6 @@ class MainActivity : AppCompatActivity() {
         try {
             val dao = db.dao()
             if (dao.findByCode(listProductResponse[position].pr_kode) != null) {
-                // dao.updateCart(listProductResponse[position])
                 val totalPrice = totalItems * listProduct[position].pr_harga.toInt()
                 dao.updateCart(totalItems, totalPrice, listProductResponse[position].pr_kode)
             } else {
@@ -244,21 +233,19 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.getAllCartData().observe(this, Observer { response ->
             val localeID = Locale("in", "ID")
             val numberFormat = NumberFormat.getCurrencyInstance(localeID)
-            val price = dao.totalPrice()
             val itemCount = dao.totalItem()
+            val price = dao.totalPrice()
             if (response != null) {
-                if (itemCount.toInt() != 0) {
-                    // Cart Show
-                    val clickListener: View.OnClickListener = View.OnClickListener {
-                        startActivity(Intent(this@MainActivity, CheckoutActivity::class.java))
-                    }
-                    SnackbarCart.make(
-                        search_div, itemCount, Snackbar.LENGTH_INDEFINITE,
-                        clickListener, R.drawable.ic_shopping_bag, numberFormat.format(price.toInt()),
-                        ContextCompat.getColor(this@MainActivity, R.color.purple_700)
-                    )?.show()
-                    // ----------------------------------------------------------------------------
+                // Cart Show
+                val clickListener: View.OnClickListener = View.OnClickListener {
+                    startActivity(Intent(this@MainActivity, CheckoutActivity::class.java))
                 }
+                SnackbarCart.make(
+                    search_div, itemCount, Snackbar.LENGTH_INDEFINITE,
+                    clickListener, R.drawable.ic_shopping_bag, numberFormat.format(price.toInt()),
+                    ContextCompat.getColor(this@MainActivity, R.color.purple_700)
+                )?.show()
+                // ----------------------------------------------------------------------------
             }
         })
     }

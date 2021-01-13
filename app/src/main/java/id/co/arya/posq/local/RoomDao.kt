@@ -19,18 +19,19 @@ interface RoomDao {
     @Query("SELECT * FROM cart")
     fun selectAllCart(): List<Cart>
 
+    @Query("SELECT * FROM cart WHERE total > 0")
+    fun selectAllSelectedCart(): List<Cart>
+
     @Query("DELETE FROM cart")
     fun emptyCart()
 
     @Query("DELETE FROM cart WHERE pr_kode = :pr_kode")
     fun deleteItems(pr_kode: String)
 
-//    @Delete
-//    fun deleteItems(cart: Cart)
-
     @Query("SELECT SUM(pr_harga) FROM cart")
     fun totalPrice(): String
 
-    @Query("SELECT COUNT(pr_harga) FROM cart")
+    @Query("SELECT COUNT(pr_id) FROM cart WHERE total > 0")
     fun totalItem(): String
+
 }
