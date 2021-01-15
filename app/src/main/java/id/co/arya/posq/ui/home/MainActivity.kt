@@ -6,19 +6,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
-import com.google.android.material.snackbar.Snackbar
 import com.whty.smartpos.tysmartposapi.ITYSmartPosApi
 import dagger.hilt.android.AndroidEntryPoint
 import id.co.arya.posq.R
 import id.co.arya.posq.adapter.ItemMenuAdapter
 import id.co.arya.posq.api.ApiHelper
 import id.co.arya.posq.api.RetrofitBuilder
-import id.co.arya.posq.costumeview.snackbarcart.SnackbarCart
 import id.co.arya.posq.data.model.Cart
 import id.co.arya.posq.data.request.RequestParams
 import id.co.arya.posq.local.AppDatabase
@@ -33,6 +30,7 @@ import java.text.NumberFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -236,16 +234,19 @@ class MainActivity : AppCompatActivity() {
             val itemCount = dao.totalItem()
             val price = dao.totalPrice()
             if (response != null) {
-                // Cart Show
-                val clickListener: View.OnClickListener = View.OnClickListener {
-                    startActivity(Intent(this@MainActivity, CheckoutActivity::class.java))
+                if (price.toInt() == 0) {
+                    cart_div.visibility = View.GONE
+                    rv_product.setPadding(0, 0, 0, 0)
+                } else {
+                    var padding = resources.getDimensionPixelOffset(R.dimen._60sdp)
+                    rv_product.setPadding(0, 0, 0, padding)
+                    cart_div.visibility = View.VISIBLE
+                    tv_message.text = "$itemCount"
+                    tv_action.text = "${numberFormat.format(price.toInt())}"
+                    cart_div.setOnClickListener {
+                        startActivity(Intent(this@MainActivity, CheckoutActivity::class.java))
+                    }
                 }
-                SnackbarCart.make(
-                    search_div, itemCount, Snackbar.LENGTH_INDEFINITE,
-                    clickListener, R.drawable.ic_shopping_bag, numberFormat.format(price.toInt()),
-                    ContextCompat.getColor(this@MainActivity, R.color.purple_700)
-                )?.show()
-                // ----------------------------------------------------------------------------
             }
         })
     }

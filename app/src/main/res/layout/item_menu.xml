@@ -10,10 +10,11 @@
         android:layout_width="@dimen/_100sdp"
         android:layout_height="@dimen/_100sdp"
         android:layout_margin="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_12sdp"
         android:background="@drawable/background_image"
         android:scaleType="centerCrop"
         android:src="@drawable/nasigoreng"
-        app:layout_constraintBottom_toTopOf="@id/underline"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -90,15 +91,5 @@
         android:textSize="@dimen/_10ssp"
         app:layout_constraintBottom_toBottomOf="@id/img_menu"
         app:layout_constraintEnd_toEndOf="@+id/title_menu" />
-
-    <View
-        android:id="@+id/underline"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/_1sdp"
-        android:layout_marginBottom="@dimen/_8sdp"
-        android:background="@color/teal_200"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/add_menu"
-        app:layout_constraintStart_toStartOf="@id/img_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

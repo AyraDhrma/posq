@@ -8,6 +8,7 @@ import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import id.co.arya.posq.R
 
 class SnackbarCart(
@@ -32,7 +33,6 @@ class SnackbarCart(
                 message: String, duretion: Int,
                 listener: View.OnClickListener?, icon: Int?, action_lable: String?, bg_color: Int
         ): SnackbarCart? {
-
             // First we find a suitable parent for our custom view
             val parent = view.findSuitableParent() ?: throw IllegalArgumentException(
                 "No suitable parent found from the given view. Please provide a valid view."
@@ -56,7 +56,6 @@ class SnackbarCart(
                 icon?.let { customView.imLeft.setImageResource(it) }
                 customView.layRoot.setBackgroundColor(bg_color)
 
-
                 return SnackbarCart(
                     parent,
                     customView
@@ -68,7 +67,7 @@ class SnackbarCart(
             return null
         }
 
-        internal fun View?.findSuitableParent(): ViewGroup? {
+        private fun View?.findSuitableParent(): ViewGroup? {
             var view = this
             var fallback: ViewGroup? = null
             do {

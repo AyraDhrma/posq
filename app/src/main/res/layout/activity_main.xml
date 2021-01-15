@@ -57,6 +57,7 @@
             android:id="@+id/rv_product"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:overScrollMode="never"
             tools:itemCount="5"
             tools:listitem="@layout/item_menu"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -72,6 +73,80 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cart_div"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:cardCornerRadius="@dimen/_10sdp"
+            android:layout_margin="@dimen/_8sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/snack_constraint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_cart">
+
+                <androidx.appcompat.widget.AppCompatImageView
+
+                    android:id="@+id/im_action_left"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_margin="@dimen/_12sdp"
+                    android:src="@drawable/ic_shopping_bag"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="VectorDrawableCompat" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="left"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:textColor="@color/white"
+                    android:ellipsize="end"
+                    android:textSize="@dimen/_12ssp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@+id/im_action_left"
+                    app:layout_constraintStart_toEndOf="@+id/im_action_left"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="5 Items" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_action"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto_medium"
+                    android:gravity="left"
+                    android:paddingLeft="@dimen/_10sdp"
+                    android:ellipsize="end"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingRight="@dimen/_16sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:textAlignment="textEnd"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_12ssp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintLeft_toRightOf="@+id/tv_message"
+                    app:layout_constraintStart_toEndOf="@+id/tv_message"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Rp10.000.000" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

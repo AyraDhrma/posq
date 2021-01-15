@@ -1,31 +1,42 @@
 package id.co.arya.posq.ui.checkout
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonArray
 import dagger.hilt.android.AndroidEntryPoint
 import id.co.arya.posq.R
 import id.co.arya.posq.adapter.ItemCheckoutAdapter
 import id.co.arya.posq.api.ApiHelper
 import id.co.arya.posq.api.RetrofitBuilder
 import id.co.arya.posq.data.model.Cart
+import id.co.arya.posq.data.model.CheckoutItems
 import id.co.arya.posq.local.AppDatabase
 import id.co.arya.posq.local.SharedPreferenceManager
 import kotlinx.android.synthetic.main.activity_checkout.*
+import org.json.JSONArray
 import java.text.NumberFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class CheckoutActivity : AppCompatActivity() {
 
+    private var price = ""
     private lateinit var db: AppDatabase
+
     @Inject
     lateinit var sharedPreferences: SharedPreferenceManager
     lateinit var checkoutViewModel: CheckoutViewModel
     lateinit var checkoutFactory: CheckoutFactory
+    private lateinit var listCheckout: ArrayList<Cart>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +50,12 @@ class CheckoutActivity : AppCompatActivity() {
             .build()
 
         val dao = db.dao()
-        val price = dao.totalPrice()
+        price = dao.totalPrice()
         var allCart = dao.selectAllSelectedCart()
         checkoutViewModel.setAllCartData(allCart as java.util.ArrayList<Cart>)
-        checkoutViewModel.getAllCartData().observe(this, androidx.lifecycle.Observer {
-            response ->
+        checkoutViewModel.getAllCartData().observe(this, androidx.lifecycle.Observer { response ->
             if (response != null) {
+                listCheckout = response
                 val localeID = Locale("in", "ID")
                 val numberFormat = NumberFormat.getCurrencyInstance(localeID)
                 rv_checkout.setHasFixedSize(true)
@@ -54,6 +65,17 @@ class CheckoutActivity : AppCompatActivity() {
                 total_price.text = "Total ${numberFormat.format(price?.toInt())}"
             }
         })
+
+        order.setOnClickListener {
+            val gson = Gson()
+            val checkoutData = CheckoutItems(
+                price,
+                listCheckout
+            )
+            val listCheckoutData: String = gson.toJson(checkoutData)
+            Log.d("POSQ", listCheckoutData)
+            Toast.makeText(this@CheckoutActivity, listCheckoutData, Toast.LENGTH_SHORT).show()
+        }
     }
 
 }
