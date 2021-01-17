@@ -1,14 +1,11 @@
 package id.co.arya.posq.local
 
 import android.content.Context
-import android.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import dagger.hilt.android.qualifiers.ApplicationContext
 import id.co.arya.posq.data.model.Cart
 import id.co.arya.posq.data.response.LoginResponse
 import id.co.arya.posq.utils.Constant
-import javax.inject.Inject
 
 
 class SharedPreferenceManagerNoHilt constructor(val context: Context) {
@@ -31,6 +28,27 @@ class SharedPreferenceManagerNoHilt constructor(val context: Context) {
         edit?.putString(Constant.CREATEDBY, loginResponse.data.us_create_by)
         edit?.putString(Constant.CREATED, loginResponse.data.us_created)
         edit?.putString(Constant.MODIFIED, loginResponse.data.us_modified)
+        edit?.apply()
+    }
+
+    fun clearUserData() {
+        val sharedPreferences =
+            context.getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        val edit = sharedPreferences?.edit()
+        edit?.putString(Constant.UID, "")
+        edit?.putString(Constant.USERNAME, "")
+        edit?.putString(Constant.PASSWORD, "")
+        edit?.putString(Constant.NAMA, "")
+        edit?.putString(Constant.ALAMAT, "")
+        edit?.putString(Constant.KOTA, "")
+        edit?.putString(Constant.PHOTO, "")
+        edit?.putString(Constant.HP, "")
+        edit?.putString(Constant.KET, "")
+        edit?.putString(Constant.EMAIL, "")
+        edit?.putString(Constant.AKTIF, "")
+        edit?.putString(Constant.CREATEDBY, "")
+        edit?.putString(Constant.CREATED, "")
+        edit?.putString(Constant.MODIFIED, "")
         edit?.apply()
     }
 

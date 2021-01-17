@@ -31,7 +31,6 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.collections.ArrayList
 
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -48,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         progressbar.visibility = View.GONE
-        checkAlreadyLogginOrNot()
+        checkAlreadyLoginOrNot()
 
         // Search Input Setting Keyboard
         search.isFocusableInTouchMode = false
@@ -64,16 +63,18 @@ class MainActivity : AppCompatActivity() {
         listener()
     }
 
-    private fun checkAlreadyLogginOrNot() {
+    private fun checkAlreadyLoginOrNot() {
         try {
             if (sharedPreferences.loadUserData().us_id == "") {
-                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                startActivity(intent)
                 finish()
             } else {
                 mainFactory = MainFactory(ApiHelper(RetrofitBuilder.apiInterface))
                 mainViewModel =
                     ViewModelProvider(this@MainActivity, mainFactory)[MainViewModel::class.java]
-                getLitProduct()
+                getListProduct()
 
                 db = Room.databaseBuilder(
                     applicationContext,
@@ -98,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         // ---------------------------------------------------------------------------
     }
 
-    private fun getLitProduct() {
+    private fun getListProduct() {
         mainViewModel.getListProduct(
             Constant.KEY,
             RequestParams(sharedPreferences.loadUserData().us_id)

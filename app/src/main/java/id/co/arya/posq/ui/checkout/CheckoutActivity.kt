@@ -8,8 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonArray
 import dagger.hilt.android.AndroidEntryPoint
 import id.co.arya.posq.R
 import id.co.arya.posq.adapter.ItemCheckoutAdapter
@@ -20,11 +18,9 @@ import id.co.arya.posq.data.model.CheckoutItems
 import id.co.arya.posq.local.AppDatabase
 import id.co.arya.posq.local.SharedPreferenceManager
 import kotlinx.android.synthetic.main.activity_checkout.*
-import org.json.JSONArray
 import java.text.NumberFormat
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 @AndroidEntryPoint
 class CheckoutActivity : AppCompatActivity() {
@@ -41,6 +37,14 @@ class CheckoutActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_checkout)
+
+        // Input Setting Keyboard
+        costumer_name_input.isFocusableInTouchMode = false
+        costumer_name_input.isFocusable = false
+        costumer_name_input.isFocusableInTouchMode = true
+        costumer_name_input.isFocusable = true
+        // ------------------------------------
+
         checkoutFactory = CheckoutFactory(ApiHelper(RetrofitBuilder.apiInterface))
         checkoutViewModel = ViewModelProvider(this, checkoutFactory)[CheckoutViewModel::class.java]
         db = Room.databaseBuilder(
@@ -67,14 +71,19 @@ class CheckoutActivity : AppCompatActivity() {
         })
 
         order.setOnClickListener {
-            val gson = Gson()
-            val checkoutData = CheckoutItems(
-                price,
-                listCheckout
-            )
-            val listCheckoutData: String = gson.toJson(checkoutData)
-            Log.d("POSQ", listCheckoutData)
-            Toast.makeText(this@CheckoutActivity, listCheckoutData, Toast.LENGTH_SHORT).show()
+            if (costumer_name_input.text.toString() == "") {
+                costumer_name_input.error = resources.getString(R.string.nama_costumer_harus_diisi)
+            } else {
+                val gson = Gson()
+                val checkoutData = CheckoutItems(
+                    price,
+                    costumer_name_input.text.toString(),
+                    listCheckout
+                )
+                val listCheckoutData: String = gson.toJson(checkoutData)
+                Log.d("POSQ", listCheckoutData)
+                Toast.makeText(this@CheckoutActivity, listCheckoutData, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

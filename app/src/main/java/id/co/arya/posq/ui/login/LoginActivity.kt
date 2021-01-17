@@ -1,9 +1,9 @@
 package id.co.arya.posq.ui.login
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -11,7 +11,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import id.co.arya.posq.R
 import id.co.arya.posq.api.ApiHelper
-import id.co.arya.posq.api.MainRepository
 import id.co.arya.posq.api.RetrofitBuilder
 import id.co.arya.posq.costumeview.snackbarcart.SnackbarCart
 import id.co.arya.posq.data.request.RequestParams
@@ -22,6 +21,8 @@ import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.math.BigInteger
+import java.security.MessageDigest
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -50,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
         login_button.setOnClickListener {
             GlobalScope.launch(Dispatchers.Main) {
                 val username = username_input.text.toString().trim()
-                val password = password_input.text.toString().trim()
+                val password = md5(password_input.text.toString().trim())
                 loginViewModel.login(Constant.KEY, RequestParams("${username}|${password}"))
                         .observe(this@LoginActivity, Observer { response ->
                             when (response.rc) {
@@ -86,4 +87,10 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun md5(input:String): String {
+        val md = MessageDigest.getInstance("MD5")
+        return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
+    }
+
 }

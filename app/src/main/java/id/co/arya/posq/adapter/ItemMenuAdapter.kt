@@ -9,7 +9,6 @@ import id.co.arya.posq.R
 import id.co.arya.posq.data.model.Cart
 import id.co.arya.posq.local.SharedPreferenceManagerNoHilt
 import kotlinx.android.synthetic.main.item_menu.view.*
-import java.math.BigInteger
 import java.text.NumberFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -53,20 +52,19 @@ class ItemMenuAdapter(private val listProduct: ArrayList<Cart>) :
             price_menu.text =
                 numberFormat.format(sharedPreferenceManagerNoHilt.getProductCart()[position].pr_harga.toInt())
                     .toString()
+            count.text = sharedPreferenceManagerNoHilt.getProductCart()[position].total.toString()
 
-//            add_menu.setOnClickListener {
-//                add_menu.visibility = View.GONE
             remove.visibility = View.VISIBLE
             count.visibility = View.VISIBLE
             add.visibility = View.VISIBLE
-//                // onItemAdded.itemSelected(position, sharedPreferenceManagerNoHilt.getProductCart())
-//            }
 
             add.setOnClickListener {
                 var updateList = ArrayList<Cart>()
                 var total: Int
                 for ((index, a) in sharedPreferenceManagerNoHilt.getProductCart().indices.withIndex()) {
-                    total = if (index == position) {
+                    total = if (index == position
+                        && sharedPreferenceManagerNoHilt.getProductCart()[index].pr_kode == sharedPreferenceManagerNoHilt.getProductCart()[position].pr_kode
+                    ) {
                         sharedPreferenceManagerNoHilt.getProductCart()[position].total + 1
                     } else {
                         sharedPreferenceManagerNoHilt.getProductCart()[index].total
@@ -101,7 +99,9 @@ class ItemMenuAdapter(private val listProduct: ArrayList<Cart>) :
                     updateList.clear()
                     var total = 0
                     for ((index, a) in sharedPreferenceManagerNoHilt.getProductCart().indices.withIndex()) {
-                        total = if (index == position) {
+                        total = if (index == position
+                            && sharedPreferenceManagerNoHilt.getProductCart()[index].pr_kode == sharedPreferenceManagerNoHilt.getProductCart()[position].pr_kode
+                        ) {
                             sharedPreferenceManagerNoHilt.getProductCart()[position].total - 1
                         } else {
                             sharedPreferenceManagerNoHilt.getProductCart()[index].total

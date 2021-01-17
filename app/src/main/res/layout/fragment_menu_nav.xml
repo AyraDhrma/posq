@@ -31,6 +31,7 @@
             android:layout_margin="@dimen/_8sdp"
             android:fontFamily="@font/roboto_bold"
             android:padding="@dimen/_10sdp"
+            android:visibility="gone"
             android:text="Printer Setting"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/close" />
@@ -44,7 +45,7 @@
             android:fontFamily="@font/roboto_bold"
             android:padding="@dimen/_10sdp"
             android:text="Printer Test"
-            app:layout_constraintEnd_toEndOf="@+id/close"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/printer_setting"
             app:layout_constraintTop_toBottomOf="@id/close" />
 
@@ -55,7 +56,7 @@
             android:layout_margin="@dimen/_8sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/printer_setting" />
+            app:layout_constraintTop_toBottomOf="@+id/printer_test" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

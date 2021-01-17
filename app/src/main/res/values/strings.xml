@@ -5,4 +5,5 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="close">CLOSE</string>
+    <string name="nama_costumer_harus_diisi">Nama Costumer Harus Diisi</string>
 </resources>

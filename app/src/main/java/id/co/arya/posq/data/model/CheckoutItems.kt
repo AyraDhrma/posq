@@ -2,5 +2,6 @@ package id.co.arya.posq.data.model
 
 data class CheckoutItems(
     val total: String,
-    val listItems: ArrayList<Cart>
+    val costumername: String,
+    val items: ArrayList<Cart>
 )

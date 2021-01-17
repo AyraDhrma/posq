@@ -2,13 +2,14 @@ package id.co.arya.posq.ui.menunav
 
 import android.app.Activity
 import android.app.Dialog
-import android.graphics.BitmapFactory
+import android.content.Intent
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -17,13 +18,15 @@ import com.whty.smartpos.tysmartposapi.printer.PrinterConfig
 import com.whty.smartpos.tysmartposapi.printer.PrinterConstrants
 import com.whty.smartpos.tysmartposapi.printer.PrinterListener
 import id.co.arya.posq.R
+import id.co.arya.posq.adapter.ItemNavAdapter
+import id.co.arya.posq.adapter.onNavSelected
+import id.co.arya.posq.local.SharedPreferenceManagerNoHilt
+import id.co.arya.posq.ui.login.LoginActivity
 import kotlinx.android.synthetic.main.fragment_menu_nav.*
-import java.io.IOException
-import java.io.InputStream
-
 
 class MenuNavFragment : BottomSheetDialogFragment() {
 
+    lateinit var sharedPreferenceManagerNoHilt: SharedPreferenceManagerNoHilt
     lateinit var smartPosApi: ITYSmartPosApi
 
     private fun getWindowHeight(): Int { // Calculate window height for fullscreen use
@@ -50,21 +53,54 @@ class MenuNavFragment : BottomSheetDialogFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-//        getSavedPrinter()
+        // getSavedPrinter()
         smartPosApi = ITYSmartPosApi.get(activity)
         smartPosApi.initPrinter()
+
+        setupNavigation()
 
         close.setOnClickListener {
             dismiss()
         }
 
-        printer_setting.setOnClickListener {
+        // printer_setting.setOnClickListener {
             // showPrinterList()
-        }
+        // }
 
         printer_test.setOnClickListener {
             getSavedPrinter()
         }
+    }
+
+    private fun setupNavigation() {
+        sharedPreferenceManagerNoHilt = activity?.let { SharedPreferenceManagerNoHilt(it) }!!
+        val list = ArrayList<String>()
+        list.add("Profile")
+        list.add("Transaction")
+        list.add("Logout")
+        val adapter = ItemNavAdapter(list)
+        rv_menu_nav.setHasFixedSize(true)
+        rv_menu_nav.layoutManager = LinearLayoutManager(activity)
+        rv_menu_nav.adapter = adapter
+        adapter.onSelectedNavigation(object : onNavSelected{
+            override fun onNavSelected(position: Int, list: ArrayList<String>) {
+                when(list[position]) {
+                    "Logout" -> {
+                        sharedPreferenceManagerNoHilt.clearUserData()
+                        val intent = Intent(activity, LoginActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        startActivity(intent)
+                        activity?.finish()
+                    }
+                    "Transaction" -> {
+                        showToast("List Transaksi")
+                    }
+                    "Profile" -> {
+                        showToast("Profile Merchant")
+                    }
+                }
+            }
+        })
     }
 
     private fun showToast(message: String) {
@@ -82,7 +118,7 @@ class MenuNavFragment : BottomSheetDialogFragment() {
 
         smartPosApi.setPrinterListener(object : PrinterListener {
             override fun onPrinterError(p0: String?) {
-                showToast(p0.toString())
+                showToast("Error Printing")
             }
 
             override fun onPrinterStart(p0: String?) {
