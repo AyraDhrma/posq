@@ -9,7 +9,7 @@ class Constant {
 
         val ADDED_CART = "added_cart"
         val PRODUCT_CART = "product_cart"
-        val URL = "http://103.82.241.220/posapi/"
+        val URL = "http://dc1.simako.id/posapi/"
         val menuNavFragmentTag = "MENU_NAV_FRAGMENT"
         val KEY = "f99aecef3d12e02dcbb6260bbdd35189c89e6e73"
         val TAG = ""

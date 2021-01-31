@@ -3,6 +3,8 @@ package id.co.arya.posq.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import id.co.arya.posq.R
@@ -13,8 +15,11 @@ import java.text.NumberFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ItemMenuAdapter(private val listProduct: ArrayList<Cart>) :
-    RecyclerView.Adapter<ItemMenuAdapter.ViewHolder>() {
+class ItemMenuAdapter(var listProduct: ArrayList<Cart>) :
+    RecyclerView.Adapter<ItemMenuAdapter.ViewHolder>(), Filterable {
+
+    private var searchFilter: ItemSearchFilter? = null
+    private var listProductFilter: ArrayList<Cart> = sharedPreferenceManagerNoHilt.getProductCart()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
@@ -35,7 +40,7 @@ class ItemMenuAdapter(private val listProduct: ArrayList<Cart>) :
     }
 
     override fun getItemCount(): Int {
-        return listProduct.size
+        return sharedPreferenceManagerNoHilt.getProductCart().size
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -80,6 +85,7 @@ class ItemMenuAdapter(private val listProduct: ArrayList<Cart>) :
                             sharedPreferenceManagerNoHilt.getProductCart()[index].pr_st_kode,
                             sharedPreferenceManagerNoHilt.getProductCart()[index].pr_us_id,
                             sharedPreferenceManagerNoHilt.getProductCart()[index].pr_harga,
+                            sharedPreferenceManagerNoHilt.getProductCart()[index].pr_kategori,
                             sharedPreferenceManagerNoHilt.getProductCart()[index].pr_keterangan,
                             sharedPreferenceManagerNoHilt.getProductCart()[index].pr_created,
                             sharedPreferenceManagerNoHilt.getProductCart()[index].pr_modified,
@@ -117,6 +123,7 @@ class ItemMenuAdapter(private val listProduct: ArrayList<Cart>) :
                                 sharedPreferenceManagerNoHilt.getProductCart()[index].pr_st_kode,
                                 sharedPreferenceManagerNoHilt.getProductCart()[index].pr_us_id,
                                 sharedPreferenceManagerNoHilt.getProductCart()[index].pr_harga,
+                                sharedPreferenceManagerNoHilt.getProductCart()[index].pr_kategori,
                                 sharedPreferenceManagerNoHilt.getProductCart()[index].pr_keterangan,
                                 sharedPreferenceManagerNoHilt.getProductCart()[index].pr_created,
                                 sharedPreferenceManagerNoHilt.getProductCart()[index].pr_modified,
@@ -136,6 +143,13 @@ class ItemMenuAdapter(private val listProduct: ArrayList<Cart>) :
         fun itemSelected(position: Int, listProductResponse: ArrayList<Cart>)
         fun itemAdded(position: Int, totalItems: Int, listProductResponse: ArrayList<Cart>)
         fun itemRemove(position: Int, totalItems: Int, listProductResponse: ArrayList<Cart>)
+    }
+
+    override fun getFilter(): Filter {
+        if (searchFilter == null) {
+            searchFilter = ItemSearchFilter(this, listProductFilter)
+        }
+        return searchFilter as ItemSearchFilter
     }
 
 }

@@ -15,6 +15,7 @@ data class Cart(
     @ColumnInfo(name = "pr_st_kode") val pr_st_kode: String,
     @ColumnInfo(name = "pr_us_id") val pr_us_id: String,
     @ColumnInfo(name = "pr_harga") val pr_harga: String,
+    @ColumnInfo(name = "pr_kategori") val pr_kategori: String,
     @ColumnInfo(name = "pr_keterangan") val pr_keterangan: String,
     @ColumnInfo(name = "pr_created") val pr_created: String,
     @ColumnInfo(name = "pr_modified") val pr_modified: String,

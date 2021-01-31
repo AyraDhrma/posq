@@ -77,6 +77,7 @@ class CheckoutActivity : AppCompatActivity() {
                 val gson = Gson()
                 val checkoutData = CheckoutItems(
                     price,
+                    sharedPreferences.loadUserData().us_id,
                     costumer_name_input.text.toString(),
                     listCheckout
                 )

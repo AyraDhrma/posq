@@ -5,7 +5,6 @@ import id.co.arya.posq.data.response.ListProductResponse
 import id.co.arya.posq.data.response.LoginResponse
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 
@@ -22,4 +21,5 @@ interface ApiInterface {
             @Header("x-api-key") apiKey: String,
             @Body data: RequestParams
     ): ListProductResponse
+
 }

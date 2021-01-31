@@ -1,19 +1,25 @@
 package id.co.arya.posq.ui.home
 
+import `in`.galaxyofandroid.spinerdialog.SpinnerDialog
 import android.content.Intent
 import android.database.sqlite.SQLiteException
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import com.squareup.picasso.Picasso
 import com.whty.smartpos.tysmartposapi.ITYSmartPosApi
 import dagger.hilt.android.AndroidEntryPoint
 import id.co.arya.posq.R
 import id.co.arya.posq.adapter.ItemMenuAdapter
+import id.co.arya.posq.adapter.RecyclerMenuAdapter
 import id.co.arya.posq.api.ApiHelper
 import id.co.arya.posq.api.RetrofitBuilder
 import id.co.arya.posq.data.model.Cart
@@ -26,6 +32,8 @@ import id.co.arya.posq.ui.menunav.MenuNavFragment
 import id.co.arya.posq.utils.Constant
 import id.co.arya.posq.utils.Status
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.item_menu.view.*
+import kotlinx.android.synthetic.main.item_menu_all.view.*
 import java.text.NumberFormat
 import java.util.*
 import javax.inject.Inject
@@ -34,6 +42,7 @@ import kotlin.collections.ArrayList
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var adapter: ItemMenuAdapter
     private lateinit var db: AppDatabase
 
     @Inject
@@ -42,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var mainViewModel: MainViewModel
     lateinit var mainFactory: MainFactory
     private lateinit var listProduct: ArrayList<Cart>
+    private lateinit var listKategori: ArrayList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +109,8 @@ class MainActivity : AppCompatActivity() {
         // ---------------------------------------------------------------------------
     }
 
+    inner class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+
     private fun getListProduct() {
         mainViewModel.getListProduct(
             Constant.KEY,
@@ -110,6 +122,28 @@ class MainActivity : AppCompatActivity() {
                         Status.SUCCESS -> {
                             progressbar.visibility = View.GONE
                             if (resource.data?.rc == "0000") {
+
+                                listKategori = ArrayList()
+                                listKategori.add("All")
+                                for ((index, a) in resource.data.kategori.indices.withIndex()) {
+                                    listKategori.add(resource.data.kategori[index].pkr_nama)
+                                }
+
+                                var spinnerDialog = SpinnerDialog(
+                                    this@MainActivity,
+                                    listKategori,
+                                    "Select Category",
+                                    R.style.DialogAnimations_SmileWindow,
+                                    "Close"
+                                )
+
+                                spinnerDialog.setCancellable(true)
+                                spinnerDialog.setShowKeyboard(false)
+                                title_kategori.text = "Filter : ${listKategori[0]}"
+                                spinnerDialog.bindOnSpinerListener { item, _ ->
+                                    title_kategori.text = "Filter : $item"
+                                }
+                                findViewById<View>(R.id.title_kategori).setOnClickListener { spinnerDialog.showSpinerDialog() }
 
                                 listProduct = ArrayList()
                                 for ((index, a) in resource.data.data.indices.withIndex()) {
@@ -124,6 +158,7 @@ class MainActivity : AppCompatActivity() {
                                             resource.data.data[index].pr_st_kode,
                                             resource.data.data[index].pr_us_id,
                                             resource.data.data[index].pr_harga,
+                                            resource.data.data[index].pr_kategori,
                                             resource.data.data[index].pr_keterangan,
                                             resource.data.data[index].pr_created,
                                             resource.data.data[index].pr_modified,
@@ -135,41 +170,235 @@ class MainActivity : AppCompatActivity() {
                                 rv_product.setHasFixedSize(true)
                                 rv_product.layoutManager = LinearLayoutManager(this)
                                 sharedPreferences.saveProductCart(listProduct)
-                                val adapter = ItemMenuAdapter(sharedPreferences.getProductCart())
-                                rv_product.adapter = adapter
-                                adapter.setOnItemSelected(object : ItemMenuAdapter.OnItemAdded {
-                                    override fun itemSelected(
-                                        position: Int,
-                                        listProductResponse: ArrayList<Cart>
-                                    ) {
 
-                                    }
-
-                                    override fun itemAdded(
-                                        position: Int,
-                                        totalItems: Int,
-                                        listProductResponse: ArrayList<Cart>
-                                    ) {
-                                        sharedPreferences.saveProductCart(listProductResponse)
-                                        insertToDatabase(position, totalItems, listProductResponse)
-                                        showCart()
-                                    }
-
-                                    override fun itemRemove(
-                                        position: Int,
-                                        totalItems: Int,
-                                        listProductResponse: ArrayList<Cart>
-                                    ) {
-                                        sharedPreferences.saveProductCart(listProductResponse)
-                                        removeFromDatabase(
-                                            position,
-                                            totalItems,
-                                            listProductResponse
+                                rv_product.adapter = RecyclerMenuAdapter(
+                                    itemCount = resource.data.kategori.size,
+                                    createHolder = { parent, _ ->
+                                        val view = LayoutInflater.from(parent.context).inflate(
+                                            R.layout.item_menu_all, parent, false
                                         )
-                                        showCart()
-                                    }
+                                        ItemHolder(view)
+                                    },
+                                    bindHolder = { holder, position ->
+                                        val listSubMenu = holder.itemView.list_sub_menu
+                                        var codeCategory = resource.data.kategori[position].pkr_kode
 
-                                })
+                                        var countKategori = 0
+                                        for ((index, a) in resource.data.data.indices.withIndex()) {
+                                            if (resource.data.data[index].pr_kategori == resource.data.kategori[position].pkr_kode) {
+                                                countKategori++
+                                            }
+                                        }
+
+                                        var indexContainsArray = ArrayList<Int>()
+                                        indexContainsArray.clear()
+                                        for ((index, a) in sharedPreferences.getProductCart().indices.withIndex()) {
+                                            if (sharedPreferences.getProductCart()[index].pr_kategori == codeCategory) {
+                                                indexContainsArray.add(index)
+                                            }
+                                        }
+
+                                        holder.itemView.apply {
+                                            title.text = resource.data.kategori[position].pkr_nama
+                                            listSubMenu.hasFixedSize()
+                                            listSubMenu.layoutManager = LinearLayoutManager(context)
+                                            listSubMenu.adapter = RecyclerMenuAdapter(
+                                                itemCount = countKategori,
+                                                createHolder = { parent, _ ->
+                                                    val view =
+                                                        LayoutInflater.from(parent.context).inflate(
+                                                            R.layout.item_menu, parent, false
+                                                        )
+                                                    ItemHolder(view)
+                                                },
+                                                bindHolder = { subholder, subposition ->
+                                                    var indexItemsContains =
+                                                        indexContainsArray[subposition]
+                                                    subholder.itemView.apply {
+                                                        val localeID = Locale("in", "ID")
+                                                        val numberFormat =
+                                                            NumberFormat.getCurrencyInstance(
+                                                                localeID
+                                                            )
+                                                        Picasso.get()
+                                                            .load(sharedPreferences.getProductCart()[indexItemsContains].pr_image)
+                                                            .into(img_menu)
+                                                        title_menu.text =
+                                                            sharedPreferences.getProductCart()[indexItemsContains].pr_nama
+                                                        price_menu.text =
+                                                            numberFormat.format(
+                                                                sharedPreferences.getProductCart()[indexItemsContains].pr_harga.toInt()
+                                                            )
+                                                                .toString()
+                                                        count.text =
+                                                            sharedPreferences.getProductCart()[indexItemsContains].total.toString()
+
+                                                        remove.visibility = View.VISIBLE
+                                                        count.visibility = View.VISIBLE
+                                                        add.visibility = View.VISIBLE
+
+                                                        add.setOnClickListener {
+                                                            var updateList = ArrayList<Cart>()
+                                                            var total: Int
+                                                            for ((index, a) in sharedPreferences.getProductCart().indices.withIndex()) {
+                                                                total = if (index == indexItemsContains
+                                                                    && sharedPreferences.getProductCart()[index].pr_kode == sharedPreferences.getProductCart()[indexItemsContains].pr_kode
+                                                                ) {
+                                                                    sharedPreferences.getProductCart()[indexItemsContains].total + 1
+                                                                } else {
+                                                                    sharedPreferences.getProductCart()[index].total
+                                                                }
+                                                                updateList.add(
+                                                                    Cart(
+                                                                        sharedPreferences.getProductCart()[index].pr_id,
+                                                                        sharedPreferences.getProductCart()[index].pr_kode,
+                                                                        sharedPreferences.getProductCart()[index].pr_nama,
+                                                                        sharedPreferences.getProductCart()[index].pr_qty,
+                                                                        sharedPreferences.getProductCart()[index].pr_tpel_kode,
+                                                                        sharedPreferences.getProductCart()[index].pr_image,
+                                                                        sharedPreferences.getProductCart()[index].pr_st_kode,
+                                                                        sharedPreferences.getProductCart()[index].pr_us_id,
+                                                                        sharedPreferences.getProductCart()[index].pr_harga,
+                                                                        sharedPreferences.getProductCart()[index].pr_kategori,
+                                                                        sharedPreferences.getProductCart()[index].pr_keterangan,
+                                                                        sharedPreferences.getProductCart()[index].pr_created,
+                                                                        sharedPreferences.getProductCart()[index].pr_modified,
+                                                                        total
+                                                                    )
+                                                                )
+                                                            }
+                                                            val totalAdded =
+                                                                updateList[indexItemsContains].total
+                                                            count.text = totalAdded.toString()
+                                                            sharedPreferences.saveProductCart(
+                                                                updateList
+                                                            )
+                                                            insertToDatabase(
+                                                                indexItemsContains,
+                                                                totalAdded,
+                                                                updateList
+                                                            )
+                                                            showCart()
+                                                        }
+
+                                                        remove.setOnClickListener {
+                                                            if (sharedPreferences.getProductCart()[indexItemsContains].total > 0) {
+                                                                var updateList =
+                                                                    ArrayList<Cart>()
+                                                                updateList.clear()
+                                                                var total = 0
+                                                                for ((index, a) in sharedPreferences.getProductCart().indices.withIndex()) {
+                                                                    total =
+                                                                        if (index == indexItemsContains
+                                                                            && sharedPreferences.getProductCart()[index].pr_kode == sharedPreferences.getProductCart()[indexItemsContains].pr_kode
+                                                                        ) {
+                                                                            sharedPreferences.getProductCart()[indexItemsContains].total - 1
+                                                                        } else {
+                                                                            sharedPreferences.getProductCart()[index].total
+                                                                        }
+                                                                    updateList.add(
+                                                                        Cart(
+                                                                            sharedPreferences.getProductCart()[index].pr_id,
+                                                                            sharedPreferences.getProductCart()[index].pr_kode,
+                                                                            sharedPreferences.getProductCart()[index].pr_nama,
+                                                                            sharedPreferences.getProductCart()[index].pr_qty,
+                                                                            sharedPreferences.getProductCart()[index].pr_tpel_kode,
+                                                                            sharedPreferences.getProductCart()[index].pr_image,
+                                                                            sharedPreferences.getProductCart()[index].pr_st_kode,
+                                                                            sharedPreferences.getProductCart()[index].pr_us_id,
+                                                                            sharedPreferences.getProductCart()[index].pr_harga,
+                                                                            sharedPreferences.getProductCart()[index].pr_kategori,
+                                                                            sharedPreferences.getProductCart()[index].pr_keterangan,
+                                                                            sharedPreferences.getProductCart()[index].pr_created,
+                                                                            sharedPreferences.getProductCart()[index].pr_modified,
+                                                                            total
+                                                                        )
+                                                                    )
+                                                                }
+                                                                val totalAdded =
+                                                                    updateList[indexItemsContains].total
+                                                                count.text =
+                                                                    totalAdded.toString()
+                                                                sharedPreferences.saveProductCart(
+                                                                    updateList
+                                                                )
+                                                                removeFromDatabase(
+                                                                    indexItemsContains,
+                                                                    totalAdded,
+                                                                    updateList
+                                                                )
+                                                                showCart()
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            )
+                                        }
+                                        PagerSnapHelper().attachToRecyclerView(listSubMenu)
+                                    }
+                                )
+
+//                                adapter = ItemMenuAdapter(sharedPreferences.getProductCart())
+//                                adapter.notifyDataSetChanged()
+//                                rv_product.adapter = adapter
+//                                adapter.setOnItemSelected(object : ItemMenuAdapter.OnItemAdded {
+//                                    override fun itemSelected(
+//                                        position: Int,
+//                                        listProductResponse: ArrayList<Cart>
+//                                    ) {
+//
+//                                    }
+//
+//                                    override fun itemAdded(
+//                                        position: Int,
+//                                        totalItems: Int,
+//                                        listProductResponse: ArrayList<Cart>
+//                                    ) {
+//                                        sharedPreferences.saveProductCart(listProductResponse)
+//                                        insertToDatabase(position, totalItems, listProductResponse)
+//                                        showCart()
+//                                    }
+//
+//                                    override fun itemRemove(
+//                                        position: Int,
+//                                        totalItems: Int,
+//                                        listProductResponse: ArrayList<Cart>
+//                                    ) {
+//                                        sharedPreferences.saveProductCart(listProductResponse)
+//                                        removeFromDatabase(
+//                                            position,
+//                                            totalItems,
+//                                            listProductResponse
+//                                        )
+//                                        showCart()
+//                                    }
+//
+//                                })
+//
+//                                search.addTextChangedListener(object: TextWatcher{
+//                                    override fun beforeTextChanged(
+//                                        p0: CharSequence?,
+//                                        p1: Int,
+//                                        p2: Int,
+//                                        p3: Int
+//                                    ) {
+//                                        adapter.filter.filter(p0)
+//                                    }
+//
+//                                    override fun onTextChanged(
+//                                        p0: CharSequence?,
+//                                        p1: Int,
+//                                        p2: Int,
+//                                        p3: Int
+//                                    ) {
+//                                        adapter.filter.filter(p0)
+//                                    }
+//
+//                                    override fun afterTextChanged(p0: Editable?) {
+//                                        adapter.filter.filter(p0)
+//                                    }
+//
+//                                })
                             } else {
                                 Toast.makeText(this, resource.data?.message, Toast.LENGTH_LONG)
                                     .show()
@@ -187,7 +416,7 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-    private fun removeFromDatabase(
+    fun removeFromDatabase(
         position: Int,
         totalItems: Int,
         listProductResponse: ArrayList<Cart>
@@ -207,7 +436,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun insertToDatabase(
+    fun insertToDatabase(
         position: Int,
         totalItems: Int,
         listProductResponse: ArrayList<Cart>
@@ -225,7 +454,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun showCart() {
+    fun showCart() {
         val dao = db.dao()
         var allCart = dao.selectAllCart()
         mainViewModel.setAllCartData(allCart as java.util.ArrayList<Cart>)
