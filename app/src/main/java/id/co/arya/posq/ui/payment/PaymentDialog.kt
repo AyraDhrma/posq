@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
@@ -16,10 +17,14 @@ import id.co.arya.posq.R
 import id.co.arya.posq.api.ApiHelper
 import id.co.arya.posq.api.RetrofitBuilder
 import id.co.arya.posq.data.model.CheckoutItems
+import id.co.arya.posq.data.request.RequestParams
 import id.co.arya.posq.data.response.PaymentMethodResponse
 import id.co.arya.posq.local.SharedPreferenceManager
 import id.co.arya.posq.ui.home.MainFactory
 import id.co.arya.posq.ui.home.MainViewModel
+import id.co.arya.posq.ui.statusorder.StatusOrderDialog
+import id.co.arya.posq.utils.Constant
+import id.co.arya.posq.utils.Status
 import kotlinx.android.synthetic.main.fragment_payment_dialog.*
 import javax.inject.Inject
 
@@ -77,7 +82,39 @@ class PaymentDialog(
                 val gson = Gson()
                 val listCheckoutData: String = gson.toJson(sharedPreferenceManager.getJsonRequestCheckout())
 
-                Toast.makeText(activity, listCheckoutData, Toast.LENGTH_LONG).show()
+                activity?.let {
+                    mainViewModel.saveOrder(
+                        Constant.KEY,
+                        RequestParams(listCheckoutData)
+                    ).observe(it, Observer { resources ->
+                        when (resources.status) {
+                            Status.LOADING -> {
+                                progressbar.visibility = View.VISIBLE
+                            }
+                            Status.SUCCESS -> {
+                                progressbar.visibility = View.GONE
+                                if (resources.data!!.rc == "0000") {
+                                   val statusOrderDialog = StatusOrderDialog(resources.data.struk)
+                                    activity?.supportFragmentManager?.let { it1 ->
+                                        statusOrderDialog.show(
+                                            it1, "STATUS_ORDER")
+                                    }
+                                    dismiss()
+                                } else {
+                                    Toast.makeText(activity, resources.data?.message, Toast.LENGTH_LONG)
+                                        .show()
+                                }
+                            }
+                            Status.ERROR -> {
+                                progressbar.visibility = View.GONE
+                                Toast.makeText(activity, resources.message, Toast.LENGTH_LONG)
+                                    .show()
+                            }
+                        }
+                    })
+                }
+                // Toast.makeText(activity, listCheckoutData, Toast.LENGTH_LONG).show()
+                // Log.d("POSQ-DEBUG", listCheckoutData)
             }
         }
     }

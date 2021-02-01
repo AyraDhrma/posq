@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.payment.PaymentDialog">
 
     <TextView
@@ -20,11 +20,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/img_payment"
+        android:id="@+id/img_status_order"
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_40sdp"
         android:layout_marginTop="@dimen/_20sdp"
-        android:background="@drawable/background_items_selected"
+        android:background="@drawable/background_logo"
         android:clickable="true"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
@@ -35,55 +35,53 @@
         android:id="@+id/label_payment_reference"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_10sdp"
         android:ellipsize="end"
         android:fontFamily="@font/roboto_bold"
         android:maxLines="1"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:layout_marginStart="@dimen/_8sdp"
-        android:text="Payment Reference"
         android:paddingTop="@dimen/_4sdp"
         android:paddingBottom="@dimen/_4sdp"
+        android:text="Struk"
         android:textAlignment="viewEnd"
         android:textColor="@color/black"
-        android:textSize="@dimen/_11ssp"
-        app:layout_constraintTop_toBottomOf="@id/img_payment"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:textSize="@dimen/_15ssp"
+        app:layout_constraintEnd_toEndOf="@+id/img_status_order"
+        app:layout_constraintStart_toStartOf="@+id/img_status_order"
+        app:layout_constraintTop_toBottomOf="@id/img_status_order" />
 
-    <EditText
-        android:id="@+id/payment_reference_input"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <ScrollView
+        android:id="@+id/scrollView_struk"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginEnd="@dimen/_8sdp"
+        android:padding="@dimen/_8sdp"
         android:background="@drawable/background_input"
-        android:fontFamily="@font/roboto_medium"
-        android:imeOptions="actionDone"
-        android:inputType="text"
-        android:padding="@dimen/_10sdp"
+        app:layout_constraintBottom_toTopOf="@id/button_done"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/label_payment_reference" />
+        app:layout_constraintTop_toBottomOf="@id/label_payment_reference">
+
+        <TextView
+            android:id="@+id/struk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:text="0"
+            android:textColor="@color/black" />
+
+    </ScrollView>
 
     <Button
-        android:id="@+id/order"
-        android:layout_width="match_parent"
+        android:id="@+id/button_done"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/roboto_bold"
         android:layout_margin="@dimen/_8sdp"
+        android:fontFamily="@font/roboto_bold"
         android:padding="@dimen/_12sdp"
-        android:text="Order"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/payment_reference_input"
-        app:layout_constraintStart_toStartOf="@+id/payment_reference_input" />
-
-    <ProgressBar
-        android:id="@+id/progressbar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:text="Done"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/payment_reference_input" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

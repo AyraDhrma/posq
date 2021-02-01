@@ -117,8 +117,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_div" />
 
-
-
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cart_div"
             android:layout_width="match_parent"

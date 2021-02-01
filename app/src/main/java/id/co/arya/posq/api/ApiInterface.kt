@@ -3,6 +3,7 @@ package id.co.arya.posq.api
 import id.co.arya.posq.data.request.RequestParams
 import id.co.arya.posq.data.response.ListProductResponse
 import id.co.arya.posq.data.response.LoginResponse
+import id.co.arya.posq.data.response.OrderResponse
 import id.co.arya.posq.data.response.PaymentMethodResponse
 import retrofit2.Call
 import retrofit2.http.Body
@@ -28,5 +29,11 @@ interface ApiInterface {
             @Header("x-api-key") apiKey: String,
             @Body data: RequestParams
     ): PaymentMethodResponse
+
+    @POST("Transaksi/checkout")
+    suspend fun saveOrder(
+            @Header("x-api-key") apiKey: String,
+            @Body data: RequestParams
+    ): OrderResponse
 
 }

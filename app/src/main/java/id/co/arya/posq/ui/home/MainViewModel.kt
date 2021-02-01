@@ -32,6 +32,15 @@ class MainViewModel(private val mainRepository: MainRepository): ViewModel() {
         }
     }
 
+    fun saveOrder(key: String, data: RequestParams) = liveData(Dispatchers.IO) {
+        emit(Resource.loading(data = null))
+        try {
+            emit(Resource.success(data = mainRepository.saveOrder(key, data)))
+        } catch (e: Exception) {
+            emit(Resource.error(data = null, message = e.message ?: "Error Occurred"))
+        }
+    }
+
     fun setAllCartData(allCart: ArrayList<Cart>) {
         this.allCart.postValue(allCart)
     }

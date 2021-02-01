@@ -50,43 +50,10 @@ class MainRepository
 
     }
 
-//    fun listProduct(key: String, data: RequestParams): MutableLiveData<ListProductResponse> {
-//
-//        var resultApi: MutableLiveData<ListProductResponse> = MutableLiveData()
-//
-//        apiService.listProduct(key, data).enqueue(object : Callback<ListProductResponse> {
-//
-//            override fun onFailure(call: Call<ListProductResponse>, t: Throwable) {
-//                val resultData = ListProductResponse.Data("", "", "",
-//                        "", "", "", "", "", "",
-//                        "", "", "")
-//                val result = ListProductResponse("ERR", "", t.localizedMessage, resultData)
-//                resultApi.postValue(result)
-//                Timber.d(TAG, t.localizedMessage)
-//            }
-//
-//            override fun onResponse(call: Call<ListProductResponse>, response: Response<ListProductResponse>) {
-//                if (response.isSuccessful) {
-//                    resultApi.postValue(response.body())
-//                    Timber.d(TAG, response.body().toString())
-//                } else {
-//                    val resultData = ListProductResponse.Data("", "", "",
-//                            "", "", "", "", "", "",
-//                            "", "", "")
-//                    val result = ListProductResponse("ERR", "", response.errorBody().toString(), resultData)
-//                    resultApi.postValue(result)
-//                    Timber.d(TAG, response.errorBody().toString())
-//                }
-//            }
-//
-//        })
-//
-//        return resultApi
-//
-//    }
-
     suspend fun getListProduct(key: String, data: RequestParams) = apiHelper.getListProduct(key, data)
 
     suspend fun getListPaymentMethod(key: String, data: RequestParams) = apiHelper.getListPaymentMethod(key, data)
+
+    suspend fun saveOrder(key: String, data: RequestParams) = apiHelper.saveOrder(key, data)
 
 }

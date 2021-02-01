@@ -70,7 +70,8 @@ class PaymentMethodDialog : BottomSheetDialogFragment() {
                                         paymentMethodResponse,
                                         position
                                     )
-                                    fragmentManager?.let { it1 -> payment.show(it1, "PAYMENT") }
+                                    activity?.supportFragmentManager?.let { it1 -> payment.show(it1, "PAYMENT") }
+                                    dismiss()
                                 }
                             })
                         } else {
