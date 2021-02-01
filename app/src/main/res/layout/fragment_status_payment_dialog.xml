@@ -16,6 +16,7 @@
         android:gravity="center"
         android:text="@string/close"
         android:textColor="@color/black"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -55,8 +56,8 @@
         android:layout_height="0dp"
         android:layout_marginStart="@dimen/_8sdp"
         android:layout_marginEnd="@dimen/_8sdp"
-        android:padding="@dimen/_8sdp"
         android:background="@drawable/background_input"
+        android:padding="@dimen/_8sdp"
         app:layout_constraintBottom_toTopOf="@id/button_done"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

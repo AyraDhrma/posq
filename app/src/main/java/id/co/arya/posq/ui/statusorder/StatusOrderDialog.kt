@@ -2,6 +2,7 @@ package id.co.arya.posq.ui.statusorder
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import id.co.arya.posq.R
+import id.co.arya.posq.ui.home.MainActivity
 import kotlinx.android.synthetic.main.fragment_status_payment_dialog.*
 
 @AndroidEntryPoint
@@ -29,10 +31,12 @@ class StatusOrderDialog(val strukdata: String) : DialogFragment() {
         struk.text = strukdata
         close.setOnClickListener {
             dismiss()
+            startActivity(Intent(activity, MainActivity::class.java))
             activity?.finish()
         }
         button_done.setOnClickListener {
             dismiss()
+            startActivity(Intent(activity, MainActivity::class.java))
             activity?.finish()
         }
     }
