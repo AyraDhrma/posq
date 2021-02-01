@@ -7,6 +7,7 @@ class Constant {
 
     companion object {
 
+        val CHECKOUT_JSON = "checkout_json"
         val ADDED_CART = "added_cart"
         val PRODUCT_CART = "product_cart"
         val URL = "http://dc1.simako.id/posapi/"

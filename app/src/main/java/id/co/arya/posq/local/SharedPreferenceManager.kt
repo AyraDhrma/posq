@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.qualifiers.ApplicationContext
 import id.co.arya.posq.data.model.Cart
+import id.co.arya.posq.data.model.CheckoutItems
 import id.co.arya.posq.data.response.LoginResponse
 import id.co.arya.posq.utils.Constant
 import javax.inject.Inject
@@ -94,6 +95,25 @@ constructor(@ApplicationContext val context: Context) {
         val gson = Gson()
         val json = sharedPreferences.getString(Constant.PRODUCT_CART, null)
         val type = object : TypeToken<ArrayList<Cart?>?>() {}.type
+        return gson.fromJson(json, type)
+    }
+
+    fun saveJsonRequestCheckout(checkoutItems: CheckoutItems) {
+        val sharedPreferences =
+            context.getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val json = gson.toJson(checkoutItems)
+        editor.putString(Constant.CHECKOUT_JSON, json)
+        editor.apply()
+    }
+
+    fun getJsonRequestCheckout(): CheckoutItems {
+        val sharedPreferences =
+            context.getSharedPreferences(Constant.SHARED_PREF_NAME, Context.MODE_PRIVATE)
+        val gson = Gson()
+        val json = sharedPreferences.getString(Constant.CHECKOUT_JSON, null)
+        val type = object : TypeToken<CheckoutItems>() {}.type
         return gson.fromJson(json, type)
     }
 

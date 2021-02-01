@@ -6,4 +6,7 @@
     <string name="password">Password</string>
     <string name="close">CLOSE</string>
     <string name="nama_costumer_harus_diisi">Nama Costumer Harus Diisi</string>
+    <string name="cannot_null">Harus Diisi</string>
+    <string name="costumer_name">Costumer Name</string>
+    <string name="pay">Pay</string>
 </resources>

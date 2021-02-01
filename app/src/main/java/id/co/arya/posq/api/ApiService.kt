@@ -56,8 +56,8 @@ class ApiService(private val url: String) {
 
         val client = OkHttpClient.Builder()
             .addInterceptor(logging)
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(150, TimeUnit.SECONDS)
+            .writeTimeout(150, TimeUnit.SECONDS)
             .sslSocketFactory(
                 sslSocketFactory,
                 (trustAllCerts[0] as X509TrustManager)

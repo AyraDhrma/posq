@@ -2,7 +2,6 @@ package id.co.arya.posq.api
 
 import androidx.lifecycle.MutableLiveData
 import id.co.arya.posq.data.request.RequestParams
-import id.co.arya.posq.data.response.ListProductResponse
 import id.co.arya.posq.data.response.LoginResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -87,5 +86,7 @@ class MainRepository
 //    }
 
     suspend fun getListProduct(key: String, data: RequestParams) = apiHelper.getListProduct(key, data)
+
+    suspend fun getListPaymentMethod(key: String, data: RequestParams) = apiHelper.getListPaymentMethod(key, data)
 
 }

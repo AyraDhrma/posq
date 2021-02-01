@@ -8,19 +8,38 @@
     android:focusableInTouchMode="true"
     tools:context=".ui.checkout.CheckoutActivity">
 
+    <TextView
+        android:id="@+id/label_costumer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="@font/roboto_bold"
+        android:maxLines="1"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:text="@string/costumer_name"
+        android:paddingTop="@dimen/_4sdp"
+        android:paddingBottom="@dimen/_4sdp"
+        android:textAlignment="viewEnd"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_11ssp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <EditText
         android:id="@+id/costumer_name_input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_8sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:fontFamily="@font/roboto_regular"
-        android:hint="Costumer Name"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_8sdp"
+        android:background="@drawable/background_input"
+        android:fontFamily="@font/roboto_medium"
         android:imeOptions="actionDone"
         android:inputType="text"
+        android:padding="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/label_costumer_name" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_checkout"
@@ -58,7 +77,7 @@
         android:layout_margin="@dimen/_8sdp"
         android:fontFamily="@font/roboto_bold"
         android:padding="@dimen/_12sdp"
-        android:text="Order"
+        android:text="@string/pay"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

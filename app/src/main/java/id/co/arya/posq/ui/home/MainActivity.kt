@@ -1,6 +1,7 @@
 package id.co.arya.posq.ui.home
 
 import `in`.galaxyofandroid.spinerdialog.SpinnerDialog
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.database.sqlite.SQLiteException
 import android.os.Bundle
@@ -59,18 +60,21 @@ class MainActivity : AppCompatActivity() {
         progressbar.visibility = View.GONE
         checkAlreadyLoginOrNot()
 
-        // Search Input Setting Keyboard
-        search.isFocusableInTouchMode = false
-        search.isFocusable = false
-        search.isFocusableInTouchMode = true
-        search.isFocusable = true
-        // ------------------------------------
-
         // Hardware EDC
         smartPosApi = ITYSmartPosApi.get(this)
         // ------------------------------------
 
         listener()
+    }
+
+    private fun showNoData() {
+        img_no_data.visibility = View.VISIBLE
+        refresh.visibility = View.VISIBLE
+    }
+
+    private fun hideNoData() {
+        img_no_data.visibility = View.GONE
+        refresh.visibility = View.GONE
     }
 
     private fun checkAlreadyLoginOrNot() {
@@ -107,10 +111,18 @@ class MainActivity : AppCompatActivity() {
             menunavfragment.show(supportFragmentManager, Constant.menuNavFragmentTag)
         }
         // ---------------------------------------------------------------------------
+
+        refresh.setOnClickListener {
+            getListProduct()
+        }
+        img_no_data.setOnClickListener {
+            getListProduct()
+        }
     }
 
     inner class ItemHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 
+    @SuppressLint("SetTextI18n")
     private fun getListProduct() {
         mainViewModel.getListProduct(
             Constant.KEY,
@@ -122,29 +134,6 @@ class MainActivity : AppCompatActivity() {
                         Status.SUCCESS -> {
                             progressbar.visibility = View.GONE
                             if (resource.data?.rc == "0000") {
-
-                                listKategori = ArrayList()
-                                listKategori.add("All")
-                                for ((index, a) in resource.data.kategori.indices.withIndex()) {
-                                    listKategori.add(resource.data.kategori[index].pkr_nama)
-                                }
-
-                                var spinnerDialog = SpinnerDialog(
-                                    this@MainActivity,
-                                    listKategori,
-                                    "Select Category",
-                                    R.style.DialogAnimations_SmileWindow,
-                                    "Close"
-                                )
-
-                                spinnerDialog.setCancellable(true)
-                                spinnerDialog.setShowKeyboard(false)
-                                title_kategori.text = "Filter : ${listKategori[0]}"
-                                spinnerDialog.bindOnSpinerListener { item, _ ->
-                                    title_kategori.text = "Filter : $item"
-                                }
-                                findViewById<View>(R.id.title_kategori).setOnClickListener { spinnerDialog.showSpinerDialog() }
-
                                 listProduct = ArrayList()
                                 for ((index, a) in resource.data.data.indices.withIndex()) {
                                     listProduct.add(
@@ -241,13 +230,14 @@ class MainActivity : AppCompatActivity() {
                                                             var updateList = ArrayList<Cart>()
                                                             var total: Int
                                                             for ((index, a) in sharedPreferences.getProductCart().indices.withIndex()) {
-                                                                total = if (index == indexItemsContains
-                                                                    && sharedPreferences.getProductCart()[index].pr_kode == sharedPreferences.getProductCart()[indexItemsContains].pr_kode
-                                                                ) {
-                                                                    sharedPreferences.getProductCart()[indexItemsContains].total + 1
-                                                                } else {
-                                                                    sharedPreferences.getProductCart()[index].total
-                                                                }
+                                                                total =
+                                                                    if (index == indexItemsContains
+                                                                        && sharedPreferences.getProductCart()[index].pr_kode == sharedPreferences.getProductCart()[indexItemsContains].pr_kode
+                                                                    ) {
+                                                                        sharedPreferences.getProductCart()[indexItemsContains].total + 1
+                                                                    } else {
+                                                                        sharedPreferences.getProductCart()[index].total
+                                                                    }
                                                                 updateList.add(
                                                                     Cart(
                                                                         sharedPreferences.getProductCart()[index].pr_id,
@@ -338,67 +328,27 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 )
 
-//                                adapter = ItemMenuAdapter(sharedPreferences.getProductCart())
-//                                adapter.notifyDataSetChanged()
-//                                rv_product.adapter = adapter
-//                                adapter.setOnItemSelected(object : ItemMenuAdapter.OnItemAdded {
-//                                    override fun itemSelected(
-//                                        position: Int,
-//                                        listProductResponse: ArrayList<Cart>
-//                                    ) {
-//
-//                                    }
-//
-//                                    override fun itemAdded(
-//                                        position: Int,
-//                                        totalItems: Int,
-//                                        listProductResponse: ArrayList<Cart>
-//                                    ) {
-//                                        sharedPreferences.saveProductCart(listProductResponse)
-//                                        insertToDatabase(position, totalItems, listProductResponse)
-//                                        showCart()
-//                                    }
-//
-//                                    override fun itemRemove(
-//                                        position: Int,
-//                                        totalItems: Int,
-//                                        listProductResponse: ArrayList<Cart>
-//                                    ) {
-//                                        sharedPreferences.saveProductCart(listProductResponse)
-//                                        removeFromDatabase(
-//                                            position,
-//                                            totalItems,
-//                                            listProductResponse
-//                                        )
-//                                        showCart()
-//                                    }
-//
-//                                })
-//
-//                                search.addTextChangedListener(object: TextWatcher{
-//                                    override fun beforeTextChanged(
-//                                        p0: CharSequence?,
-//                                        p1: Int,
-//                                        p2: Int,
-//                                        p3: Int
-//                                    ) {
-//                                        adapter.filter.filter(p0)
-//                                    }
-//
-//                                    override fun onTextChanged(
-//                                        p0: CharSequence?,
-//                                        p1: Int,
-//                                        p2: Int,
-//                                        p3: Int
-//                                    ) {
-//                                        adapter.filter.filter(p0)
-//                                    }
-//
-//                                    override fun afterTextChanged(p0: Editable?) {
-//                                        adapter.filter.filter(p0)
-//                                    }
-//
-//                                })
+                                listKategori = ArrayList()
+                                for ((index, a) in resource.data.kategori.indices.withIndex()) {
+                                    listKategori.add(resource.data.kategori[index].pkr_nama)
+                                }
+
+                                var spinnerDialog = SpinnerDialog(
+                                    this@MainActivity,
+                                    listKategori,
+                                    "Select Category",
+                                    R.style.DialogAnimations_SmileWindow,
+                                    "Close"
+                                )
+
+                                spinnerDialog.setCancellable(true)
+                                spinnerDialog.setShowKeyboard(false)
+                                title_kategori.text = "Filter : ${listKategori[0]}"
+                                spinnerDialog.bindOnSpinerListener { item, position ->
+                                    rv_product.smoothScrollToPosition(position)
+                                    search.setText("$item")
+                                }
+                                findViewById<View>(R.id.search).setOnClickListener { spinnerDialog.showSpinerDialog() }
                             } else {
                                 Toast.makeText(this, resource.data?.message, Toast.LENGTH_LONG)
                                     .show()
@@ -406,9 +356,10 @@ class MainActivity : AppCompatActivity() {
                         }
                         Status.ERROR -> {
                             progressbar.visibility = View.GONE
-                            Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                            showNoData()
                         }
                         Status.LOADING -> {
+                            hideNoData()
                             progressbar.visibility = View.VISIBLE
                         }
                     }

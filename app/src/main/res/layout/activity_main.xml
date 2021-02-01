@@ -31,9 +31,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/white"
-                    android:drawableLeft="@drawable/ic_search"
+                    android:drawableLeft="@drawable/ic_filter"
                     android:drawablePadding="@dimen/_6sdp"
-                    android:hint="Cari"
+                    android:hint="Select Category"
+                    android:focusableInTouchMode="false"
                     android:imeOptions="actionDone"
                     android:inputType="textCapSentences"
                     android:padding="@dimen/_8sdp"
@@ -51,9 +52,33 @@
             android:layout_height="@dimen/_24sdp"
             android:layout_margin="@dimen/_8sdp"
             android:src="@drawable/ic_menu"
-            app:layout_constraintBottom_toBottomOf="@+id/search_div"
+            app:layout_constraintBottom_toBottomOf="@id/search_div"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/search_div" />
+
+        <ImageView
+            android:id="@+id/img_no_data"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_150sdp"
+            android:layout_margin="@dimen/_8sdp"
+            android:src="@drawable/ic_empty"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_bold"
+            android:textSize="@dimen/_12ssp"
+            android:visibility="gone"
+            android:text="Klik disini untuk muat ulang"
+            app:layout_constraintTop_toBottomOf="@id/img_no_data"
+            app:layout_constraintStart_toStartOf="@id/img_no_data"
+            app:layout_constraintEnd_toEndOf="@id/img_no_data"/>
 
         <TextView
             android:id="@+id/title_kategori"
@@ -62,6 +87,7 @@
             android:layout_marginTop="@dimen/_4sdp"
             android:maxLines="1"
             android:lines="1"
+            android:visibility="gone"
             android:ellipsize="end"
             android:textAlignment="textEnd"
             android:textSize="@dimen/_12ssp"
@@ -69,7 +95,7 @@
             app:layout_constraintEnd_toEndOf="@+id/menu_navigation"
             app:layout_constraintStart_toStartOf="@+id/search_div"
             app:layout_constraintTop_toBottomOf="@id/search_div"
-            android:text="Filter : Kategori" />
+            android:text="" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_product"
@@ -90,6 +116,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/search_div" />
+
+
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cart_div"

@@ -1,13 +1,10 @@
 package id.co.arya.posq.ui.checkout
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
-import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
 import id.co.arya.posq.R
 import id.co.arya.posq.adapter.ItemCheckoutAdapter
@@ -17,6 +14,7 @@ import id.co.arya.posq.data.model.Cart
 import id.co.arya.posq.data.model.CheckoutItems
 import id.co.arya.posq.local.AppDatabase
 import id.co.arya.posq.local.SharedPreferenceManager
+import id.co.arya.posq.ui.paymentmethod.PaymentMethodDialog
 import kotlinx.android.synthetic.main.activity_checkout.*
 import java.text.NumberFormat
 import java.util.*
@@ -74,16 +72,17 @@ class CheckoutActivity : AppCompatActivity() {
             if (costumer_name_input.text.toString() == "") {
                 costumer_name_input.error = resources.getString(R.string.nama_costumer_harus_diisi)
             } else {
-                val gson = Gson()
                 val checkoutData = CheckoutItems(
                     price,
                     sharedPreferences.loadUserData().us_id,
                     costumer_name_input.text.toString(),
+                    "",
+                    "",
                     listCheckout
                 )
-                val listCheckoutData: String = gson.toJson(checkoutData)
-                Log.d("POSQ", listCheckoutData)
-                Toast.makeText(this@CheckoutActivity, listCheckoutData, Toast.LENGTH_SHORT).show()
+                sharedPreferences.saveJsonRequestCheckout(checkoutData)
+                val paymentDialog = PaymentMethodDialog()
+                paymentDialog.show(supportFragmentManager, "PAYMENT_METHOD")
             }
         }
     }
